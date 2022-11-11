@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BackEnd/ConferencePlanner.db
+/BackEnd/ConferencePlanner.db-shm
+/BackEnd/ConferencePlanner.db-wal
