@@ -19,4 +19,6 @@ public interface IApiClient
     Task<AttendeeResponse?> GetAttendeeAsync(string name);
 
     Task DeleteSessionAsync(int id);
+
+    Task<List<SearchResult>> SearchAsync(string query);
 }
