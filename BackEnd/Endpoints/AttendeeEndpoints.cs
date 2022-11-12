@@ -1,8 +1,10 @@
 ﻿using BackEnd.Data.Context;
-using BackEnd.Data.Models;
 using BackEnd.Infrastructure;
 using ConferencePlanner.DTO;
 using Microsoft.EntityFrameworkCore;
+
+using dtos = ConferencePlanner.DTO;
+using models = BackEnd.Data.Models;
 
 namespace BackEnd.Endpoints;
 
@@ -16,7 +18,7 @@ public static class AttendeeEndpoints
                 .ThenInclude(sa => sa.Session)
                 .SingleOrDefaultAsync(a => a.UserName == username);
 
-            return attendee is Data.Models.Attendee model
+            return attendee is models.Attendee model
                 ? Results.Ok(model.MapAttendeeResponse())
                 : Results.NotFound();
         })
@@ -25,7 +27,7 @@ public static class AttendeeEndpoints
         .Produces<AttendeeResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapPost("/api/Attendee/", async (ConferencePlanner.DTO.Attendee input, ConferencePlannerContext db) =>
+        routes.MapPost("/api/Attendee/", async (dtos.Attendee input, ConferencePlannerContext db) =>
         {
             // Check if the attendee already exists
             var existingAttendee = await db.Attendees
@@ -34,7 +36,7 @@ public static class AttendeeEndpoints
 
             if (existingAttendee == null)
             {
-                var attendee = new Data.Models.Attendee
+                var attendee = new models.Attendee
                 {
                     FirstName = input.FirstName,
                     LastName = input.LastName,
@@ -77,7 +79,7 @@ public static class AttendeeEndpoints
                 return Results.NotFound(new { Session = sessionId });
             }
 
-            attendee.SessionAttendees.Add(new SessionAttendee
+            attendee.SessionAttendees.Add(new models.SessionAttendee
             {
                 AttendeeId = attendee.Id,
                 SessionId = sessionId
@@ -99,16 +101,16 @@ public static class AttendeeEndpoints
             var attendee = await db.Attendees.Include(a => a.SessionAttendees)
                 .SingleOrDefaultAsync(a => a.UserName == username);
 
-            if (attendee is Data.Models.Attendee)
+            if (attendee is models.Attendee)
             {
                 var session = await db.Sessions.FindAsync(sessionId);
 
-                if (session is Data.Models.Session)
+                if (session is models.Session)
                 {
                     var sessionAttendee = attendee.SessionAttendees
                         .FirstOrDefault(sa => sa.SessionId == sessionId);
 
-                    if (sessionAttendee is SessionAttendee)
+                    if (sessionAttendee is models.SessionAttendee)
                     {
                         attendee.SessionAttendees.Remove(sessionAttendee);
                     }

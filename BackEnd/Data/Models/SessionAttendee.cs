@@ -1,6 +1,4 @@
-﻿using ConferencePlanner.DTO;
-
-namespace BackEnd.Data.Models;
+﻿namespace BackEnd.Data.Models;
 
 public class SessionAttendee
 {

@@ -1,8 +1,8 @@
 ﻿using BackEnd.Data.Context;
-using BackEnd.Data.Models;
 using BackEnd.Infrastructure;
 using ConferencePlanner.DTO;
 using Microsoft.EntityFrameworkCore;
+using models = BackEnd.Data.Models;
 
 namespace BackEnd.Endpoints;
 
@@ -36,7 +36,7 @@ public static class SessionEndpoints
                 .ThenInclude(ss => ss.Speaker)
                 .SingleOrDefaultAsync(s => s.Id == id);
 
-            return session is Data.Models.Session model
+            return session is models.Session model
                 ? Results.Ok(model.MapSessionResponse())
                 : Results.NotFound();
 
@@ -46,9 +46,9 @@ public static class SessionEndpoints
         .Produces<SessionResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapPost("/api/Session/", async (ConferencePlanner.DTO.Session input, ConferencePlannerContext db) =>
+        routes.MapPost("/api/Session/", async (Session input, ConferencePlannerContext db) =>
         {
-            var session = new Data.Models.Session
+            var session = new models.Session
             {
                 Title = input.Title,
                 StartTime = input.StartTime,
@@ -67,7 +67,7 @@ public static class SessionEndpoints
         .Produces<SessionResponse>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status409Conflict);
 
-        routes.MapPut("/api/Session/{id}", async (int id, ConferencePlanner.DTO.Session input, ConferencePlannerContext db) =>
+        routes.MapPut("/api/Session/{id}", async (int id, Session input, ConferencePlannerContext db) =>
         {
             var session = await db.Sessions.FindAsync(id);
 
@@ -94,7 +94,7 @@ public static class SessionEndpoints
 
         routes.MapDelete("/api/Sessions/{id}/", async (int id, ConferencePlannerContext db) =>
         {
-            if (await db.Sessions.FindAsync(id) is Data.Models.Session session)
+            if (await db.Sessions.FindAsync(id) is models.Session session)
             {
                 db.Sessions.Remove(session);
                 await db.SaveChangesAsync();
@@ -116,7 +116,7 @@ public static class SessionEndpoints
                 return Results.Conflict("Sessions already uploaded");
             }
 
-            var loader = new TechoramaDataLoader();
+            var loader = new models.TechoramaDataLoader();
             await loader.LoadDataAsync(req.Body, db);
             await db.SaveChangesAsync();
 

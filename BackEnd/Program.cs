@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Endpoints;
 using BackEnd.Data.Context;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

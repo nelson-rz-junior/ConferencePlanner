@@ -2,6 +2,7 @@
 using BackEnd.Data.Context;
 using BackEnd.Data.Models;
 using BackEnd.Infrastructure;
+using dtos = ConferencePlanner.DTO;
 
 namespace BackEnd.Endpoints;
 
@@ -21,7 +22,7 @@ public static class SpeakerEndpoints
         })
         .WithTags("Speaker")
         .WithName("GetAllSpeakers")
-        .Produces<List<Speaker>>(StatusCodes.Status200OK);
+        .Produces<List<dtos.Speaker>>(StatusCodes.Status200OK);
 
         routes.MapGet("/api/Speaker/{id}", async (int id, ConferencePlannerContext db) =>
         {
@@ -31,12 +32,12 @@ public static class SpeakerEndpoints
                 .SingleOrDefaultAsync(s => s.Id == id);
 
             return speaker is Speaker model
-                    ? Results.Ok(model)
-                    : Results.NotFound();
+                ? Results.Ok(model.MapSpeakerResponse())
+                : Results.NotFound();
         })
         .WithTags("Speaker")
         .WithName("GetSpeakerById")
-        .Produces<Speaker>(StatusCodes.Status200OK)
+        .Produces<dtos.Speaker>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
     }
 }

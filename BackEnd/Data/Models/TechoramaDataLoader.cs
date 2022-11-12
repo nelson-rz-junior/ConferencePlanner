@@ -13,8 +13,9 @@ public class TechoramaDataLoader : DataLoader
         var reader = new StreamReader(fileStream);
         var text = await reader.ReadToEndAsync();
 
-        foreach (TechoramaSession item in
-            JsonSerializer.Deserialize<List<TechoramaSession>>(text) ?? new())
+        var techoramaSessions = JsonSerializer.Deserialize<List<TechoramaSession>>(text) ?? new();
+
+        foreach (TechoramaSession item in techoramaSessions)
         {
             //These are all required to add to the schedule
             var speakers = item.Speakers?.Split(',');
@@ -25,16 +26,11 @@ public class TechoramaDataLoader : DataLoader
 
             foreach (var thisSpeakerName in speakers)
             {
-                var theseSpeakers = new List<Speaker>();
-
                 if (!addedSpeakers.ContainsKey(thisSpeakerName))
                 {
                     var thisSpeaker = new Speaker { Name = thisSpeakerName };
                     db.Speakers.Add(thisSpeaker);
                     addedSpeakers.Add(thisSpeakerName, thisSpeaker);
-                    theseSpeakers.Add(thisSpeaker);
-                    Console.WriteLine(thisSpeakerName);
-                    theseSpeakers.Add(thisSpeaker);
                 }
 
                 if (!addedTracks.ContainsKey(item.Track))
@@ -48,7 +44,7 @@ public class TechoramaDataLoader : DataLoader
             //"08:45 - 09:45"
             string[] timeSlotParts = item.TimeSlot.Split(" - ");
 
-            //24 May 2022 | 08:45 - 09:45"
+            //"24 May 2022 | 08:45 - 09:45"
             string date = item.Date.Split(" | ")[0];
 
             var session = new Session
@@ -60,6 +56,7 @@ public class TechoramaDataLoader : DataLoader
                 Abstract = item.Description,
                 SessionSpeakers = new List<SessionSpeaker>()
             };
+
             foreach (var sp in speakers)
             {
                 session.SessionSpeakers.Add(new SessionSpeaker
