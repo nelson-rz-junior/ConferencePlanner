@@ -27,6 +27,25 @@ public static class AttendeeEndpoints
         .Produces<AttendeeResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
+        routes.MapGet("/api/Attendee/{username}/Sessions", async (string username, ConferencePlannerContext db) =>
+        {
+            var sessionResponse = await db.Sessions.AsNoTracking()
+                .Include(s => s.Track)
+                .Include(s => s.SessionSpeakers)
+                .ThenInclude(ss => ss.Speaker)
+                .Where(s => s.SessionAttendees.Any(sa => sa.Attendee.UserName == username))
+                .Select(m => m.MapSessionResponse())
+                .ToListAsync();
+
+            return sessionResponse is List<SessionResponse> model
+                ? Results.Ok(model)
+                : Results.NotFound();
+        })
+        .WithTags("Attendee")
+        .WithName("GetAttendeeSessions")
+        .Produces<List<SessionResponse>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
         routes.MapPost("/api/Attendee/", async (dtos.Attendee input, ConferencePlannerContext db) =>
         {
             // Check if the attendee already exists

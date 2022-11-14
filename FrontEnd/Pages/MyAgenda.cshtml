@@ -1,10 +1,10 @@
 ﻿@page
-@model IndexModel
+@model MyAgendaModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "My Agenda";
 }
 
-<h1>My Conference @System.DateTime.Now.Year</h1>
+<h1>My Agenda - My Conference @System.DateTime.Now.Year</h1>
 
 @if (Model.ShowMessage)
 {

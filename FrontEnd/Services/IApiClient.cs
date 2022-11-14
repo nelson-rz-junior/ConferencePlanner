@@ -18,6 +18,12 @@ public interface IApiClient
 
     Task<AttendeeResponse?> GetAttendeeAsync(string name);
 
+    Task<List<SessionResponse>> GetSessionsByAttendeeAsync(string name);
+
+    Task AddSessionToAttendeeAsync(string name, int sessionId);
+
+    Task RemoveSessionFromAttendeeAsync(string name, int sessionId);
+
     Task DeleteSessionAsync(int id);
 
     Task<List<SearchResult>> SearchAsync(string query);

@@ -9,7 +9,7 @@ namespace FrontEnd.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private readonly IApiClient _apiClient;
+    protected readonly IApiClient _apiClient;
 
     public IndexModel(ILogger<IndexModel> logger, IApiClient apiClient)
     {
@@ -30,12 +30,25 @@ public class IndexModel : PageModel
 
     public bool ShowMessage => !string.IsNullOrWhiteSpace(Message);
 
+    public List<int> UserSessions { get; set; } = new List<int>();
+
+    protected virtual Task<List<SessionResponse>> GetSessionsAsync()
+    {
+        return _apiClient.GetSessionsAsync();
+    }
+
     public async Task OnGetAsync(int day = 0)
     {
         CurrentDayOffset= day;
         IsAdmin = User.IsAdmin();
 
-        var sessions = await _apiClient.GetSessionsAsync();
+        if (User.Identity.IsAuthenticated)
+        {
+            var userSessions = await _apiClient.GetSessionsByAttendeeAsync(User.Identity.Name);
+            UserSessions = userSessions.Select(s => s.Id).ToList();
+        }
+
+        var sessions = await GetSessionsAsync();
         var startDate = sessions.Min(s => s.StartTime?.Date);
 
         DayOffsets = sessions.Select(s => s.StartTime?.Date)
@@ -50,5 +63,19 @@ public class IndexModel : PageModel
             .OrderBy(s => s.TrackId)
             .GroupBy(s => s.StartTime)
             .OrderBy(g => g.Key);
+    }
+
+    public async Task<IActionResult> OnPostAsync(int sessionId)
+    {
+        await _apiClient.AddSessionToAttendeeAsync(User.Identity.Name, sessionId);
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostRemoveAsync(int sessionId)
+    {
+        await _apiClient.RemoveSessionFromAttendeeAsync(User.Identity.Name, sessionId);
+
+        return RedirectToPage();
     }
 }

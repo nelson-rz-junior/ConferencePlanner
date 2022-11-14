@@ -2,6 +2,7 @@ using FrontEnd.Services;
 using Microsoft.EntityFrameworkCore;
 using FrontEnd.Data;
 using FrontEnd.Areas.Identity;
+using FrontEnd.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,8 +51,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();;
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequireLoginMiddleware>();
 
 app.MapRazorPages();
 
