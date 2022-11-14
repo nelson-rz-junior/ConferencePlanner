@@ -1,6 +1,8 @@
 ﻿using ConferencePlanner.DTO;
 using FrontEnd.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 
 namespace FrontEnd.Pages;
 
@@ -21,9 +23,17 @@ public class IndexModel : PageModel
 
     public int CurrentDayOffset { get; set; }
 
-    public async Task OnGet(int day = 0)
+    public bool IsAdmin { get; set; }
+
+    [TempData]
+    public string Message { get; set; }
+
+    public bool ShowMessage => !string.IsNullOrWhiteSpace(Message);
+
+    public async Task OnGetAsync(int day = 0)
     {
         CurrentDayOffset= day;
+        IsAdmin = User.IsAdmin();
 
         var sessions = await _apiClient.GetSessionsAsync();
         var startDate = sessions.Min(s => s.StartTime?.Date);

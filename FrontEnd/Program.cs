@@ -1,10 +1,34 @@
 using FrontEnd.Services;
+using Microsoft.EntityFrameworkCore;
+using FrontEnd.Data;
+using FrontEnd.Areas.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("IdentityContextConnection") ?? "Identity.db";
+
+builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(connectionString));
+
+builder.Services.AddDefaultIdentity<User>()
+    .AddEntityFrameworkStores<IdentityContext>()
+    .AddClaimsPrincipalFactory<ClaimsPrincipalFactory>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.RequireAuthenticatedUser().RequireIsAdminClaim();
+    });
+});
+
 // Add services to the container.
-builder.Services.AddRazorPages()
-    .AddRazorRuntimeCompilation();
+builder.Services.AddSingleton<IAdminService, AdminService>();
+
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Admin", "Admin");
+})
+.AddRazorRuntimeCompilation();
 
 builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
 {
@@ -26,6 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();;
 app.UseAuthorization();
 
 app.MapRazorPages();
