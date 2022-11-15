@@ -4,6 +4,7 @@ using FrontEnd.Data;
 using FrontEnd.Areas.Identity;
 using FrontEnd.Middleware;
 using QRCoder;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
