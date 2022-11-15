@@ -22,7 +22,7 @@ public class EditSessionModel : PageModel
 
     public bool ShowMessage => !string.IsNullOrWhiteSpace(Message);
 
-    public async void OnGetAsync(int id)
+    public async Task<IActionResult> OnGetAsync(int id)
     {
         var session = await _apiClient.GetSessionAsync(id);
 
@@ -35,6 +35,8 @@ public class EditSessionModel : PageModel
             StartTime= session.StartTime,
             EndTime= session.EndTime
         };
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()

@@ -12,7 +12,7 @@ public static class AttendeeEndpoints
 {
     public static void MapAttendeeEndpoints(this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/Attendee/{username}", async (string username, ConferencePlannerContext db) =>
+        routes.MapGet("/api/attendees/{username}", async (string username, ConferencePlannerContext db) =>
         {
             var attendee = await db.Attendees.Include(a => a.SessionAttendees)
                 .ThenInclude(sa => sa.Session)
@@ -27,7 +27,7 @@ public static class AttendeeEndpoints
         .Produces<AttendeeResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapGet("/api/Attendee/{username}/Sessions", async (string username, ConferencePlannerContext db) =>
+        routes.MapGet("/api/attendees/{username}/sessions", async (string username, ConferencePlannerContext db) =>
         {
             var sessionResponse = await db.Sessions.AsNoTracking()
                 .Include(s => s.Track)
@@ -46,7 +46,7 @@ public static class AttendeeEndpoints
         .Produces<List<SessionResponse>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapPost("/api/Attendee/", async (dtos.Attendee input, ConferencePlannerContext db) =>
+        routes.MapPost("/api/attendees/", async (dtos.Attendee input, ConferencePlannerContext db) =>
         {
             // Check if the attendee already exists
             var existingAttendee = await db.Attendees
@@ -68,7 +68,7 @@ public static class AttendeeEndpoints
 
                 var result = attendee.MapAttendeeResponse();
 
-                return Results.Created($"/api/Attendee/{attendee.UserName}", result);
+                return Results.Created($"/api/attendees/{attendee.UserName}", result);
             }
             else
             {
@@ -80,7 +80,7 @@ public static class AttendeeEndpoints
         .Produces<AttendeeResponse>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status409Conflict);
 
-        routes.MapPost("/api/Attendee/{username}/Session/{sessionId}", async (string username, int sessionId, ConferencePlannerContext db) =>
+        routes.MapPost("/api/attendees/{username}/sessions/{sessionId}", async (string username, int sessionId, ConferencePlannerContext db) =>
         {
             var attendee = await db.Attendees.Include(a => a.SessionAttendees)
                 .ThenInclude(sa => sa.Session)
@@ -108,14 +108,14 @@ public static class AttendeeEndpoints
 
             var result = attendee.MapAttendeeResponse();
 
-            return Results.Created($"/api/Attendee/{result.UserName}", result);
+            return Results.Created($"/api/attendees/{result.UserName}", result);
         })
         .WithTags("Attendee")
         .WithName("AddAttendeeSession")
         .Produces<AttendeeResponse>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapDelete("/api/Attendee/{username}/Session/{sessionId}", async (string username, int sessionId, ConferencePlannerContext db) =>
+        routes.MapDelete("/api/attendees/{username}/sessions/{sessionId}", async (string username, int sessionId, ConferencePlannerContext db) =>
         {
             var attendee = await db.Attendees.Include(a => a.SessionAttendees)
                 .SingleOrDefaultAsync(a => a.UserName == username);

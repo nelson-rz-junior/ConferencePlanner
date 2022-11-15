@@ -9,7 +9,7 @@ public static class SearchEndpoints
 {
     public static void MapSearchEndpoints(this IEndpointRouteBuilder router)
     {
-        router.MapGet("/api/Search/{term}", async (string term, ConferencePlannerContext db) =>
+        router.MapGet("/api/search/{term}", async (string term, ConferencePlannerContext db) =>
         {
             term = term.ToLower();
 

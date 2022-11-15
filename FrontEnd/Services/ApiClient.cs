@@ -13,7 +13,7 @@ public class ApiClient : IApiClient
 
     public async Task<bool> AddAttendeeAsync(Attendee attendee)
     {
-        var response = await _httpClient.PostAsJsonAsync("/api/Attendee", attendee);
+        var response = await _httpClient.PostAsJsonAsync("/api/attendees", attendee);
         if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
         {
             return false;
@@ -31,7 +31,7 @@ public class ApiClient : IApiClient
             return null;
         }
 
-        var response = await _httpClient.GetAsync($"/api/Attendee/{name}");
+        var response = await _httpClient.GetAsync($"/api/attendees/{name}");
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null;
@@ -52,19 +52,19 @@ public class ApiClient : IApiClient
 
     public async Task AddSessionToAttendeeAsync(string name, int sessionId)
     {
-        var response = await _httpClient.PostAsync($"/api/attendees/{name}/session/{sessionId}", null);
+        var response = await _httpClient.PostAsync($"/api/attendees/{name}/sessions/{sessionId}", null);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task RemoveSessionFromAttendeeAsync(string name, int sessionId)
     {
-        var response = await _httpClient.DeleteAsync($"/api/attendees/{name}/session/{sessionId}");
+        var response = await _httpClient.DeleteAsync($"/api/attendees/{name}/sessions/{sessionId}");
         response.EnsureSuccessStatusCode();
     }
 
     public async Task<SessionResponse?> GetSessionAsync(int id)
     {
-        var response = await _httpClient.GetAsync($"/api/Session/{id}");
+        var response = await _httpClient.GetAsync($"/api/sessions/{id}");
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null;
@@ -77,7 +77,7 @@ public class ApiClient : IApiClient
 
     public async Task<List<SessionResponse>> GetSessionsAsync()
     {
-        var response = await _httpClient.GetAsync("/api/Session");
+        var response = await _httpClient.GetAsync("/api/sessions");
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<List<SessionResponse>>() ?? new();
@@ -85,13 +85,13 @@ public class ApiClient : IApiClient
 
     public async Task PutSessionAsync(Session session)
     {
-        var response = await _httpClient.PutAsJsonAsync($"/api/Session/{session.Id}", session);
+        var response = await _httpClient.PutAsJsonAsync($"/api/sessions/{session.Id}", session);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteSessionAsync(int id)
     {
-        var response = await _httpClient.DeleteAsync($"/api/Session/{id}");
+        var response = await _httpClient.DeleteAsync($"/api/sessions/{id}");
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return;
@@ -102,7 +102,7 @@ public class ApiClient : IApiClient
 
     public async Task<SpeakerResponse?> GetSpeakerAsync(int id)
     {
-        var response = await _httpClient.GetAsync($"/api/Speaker/{id}");
+        var response = await _httpClient.GetAsync($"/api/speakers/{id}");
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null;
@@ -115,7 +115,7 @@ public class ApiClient : IApiClient
 
     public async Task<List<SpeakerResponse>> GetSpeakersAsync()
     {
-        var response = await _httpClient.GetAsync("/api/Speaker");
+        var response = await _httpClient.GetAsync("/api/speakers");
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<List<SpeakerResponse>>() ?? new();

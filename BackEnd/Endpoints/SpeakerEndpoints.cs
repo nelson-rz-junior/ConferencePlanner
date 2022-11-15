@@ -10,7 +10,7 @@ public static class SpeakerEndpoints
 {
     public static void MapSpeakerEndpoints(this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/Speaker", async (ConferencePlannerContext db) =>
+        routes.MapGet("/api/speakers", async (ConferencePlannerContext db) =>
         {
             var speakers = await db.Speakers.AsNoTracking()
                 .Include(s => s.SessionSpeakers)
@@ -24,7 +24,7 @@ public static class SpeakerEndpoints
         .WithName("GetAllSpeakers")
         .Produces<List<dtos.Speaker>>(StatusCodes.Status200OK);
 
-        routes.MapGet("/api/Speaker/{id}", async (int id, ConferencePlannerContext db) =>
+        routes.MapGet("/api/speakers/{id}", async (int id, ConferencePlannerContext db) =>
         {
             var speaker = await db.Speakers.AsNoTracking()
                 .Include(s => s.SessionSpeakers)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FrontEnd.Data;
 using FrontEnd.Areas.Identity;
 using FrontEnd.Middleware;
+using QRCoder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +23,9 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-// Add services to the container.
 builder.Services.AddSingleton<IAdminService, AdminService>();
+
+builder.Services.AddSingleton(new QRCodeService(new QRCodeGenerator()));
 
 builder.Services.AddRazorPages(options =>
 {

@@ -13,8 +13,10 @@ public class Session
     [StringLength(4000)]
     public virtual string? Abstract { get; set; }
 
+    [Display(Name = "Start Time")]
     public virtual DateTimeOffset? StartTime { get; set; }
 
+    [Display(Name = "End Time")]
     public virtual DateTimeOffset? EndTime { get; set; }
 
     public TimeSpan Duration => EndTime?.Subtract(StartTime ?? EndTime ?? DateTimeOffset.MinValue) ?? TimeSpan.Zero;

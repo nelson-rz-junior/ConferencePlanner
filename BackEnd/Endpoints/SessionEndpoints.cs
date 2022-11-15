@@ -10,7 +10,7 @@ public static class SessionEndpoints
 {
     public static void MapSessionEndpoints(this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/Session/", async (ConferencePlannerContext db) =>
+        routes.MapGet("/api/sessions/", async (ConferencePlannerContext db) =>
         {
             var sessionResponse = await db.Sessions.AsNoTracking()
                 .Include(s => s.Track)
@@ -28,7 +28,7 @@ public static class SessionEndpoints
         .Produces<List<SessionResponse>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapGet("/api/Session/{id}", async (int id, ConferencePlannerContext db) =>
+        routes.MapGet("/api/sessions/{id}", async (int id, ConferencePlannerContext db) =>
         {
             var session = await db.Sessions.AsNoTracking()
                 .Include(s => s.Track)
@@ -46,7 +46,7 @@ public static class SessionEndpoints
         .Produces<SessionResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapPost("/api/Session/", async (Session input, ConferencePlannerContext db) =>
+        routes.MapPost("/api/sessions/", async (Session input, ConferencePlannerContext db) =>
         {
             var session = new models.Session
             {
@@ -60,14 +60,14 @@ public static class SessionEndpoints
             db.Sessions.Add(session);
             await db.SaveChangesAsync();
 
-            return Results.Created($"/api/Session/{session.Id}", session.MapSessionResponse());
+            return Results.Created($"/api/sessions/{session.Id}", session.MapSessionResponse());
         })
         .WithTags("Session")
         .WithName("CreateSession")
         .Produces<SessionResponse>(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status409Conflict);
 
-        routes.MapPut("/api/Session/{id}", async (int id, Session input, ConferencePlannerContext db) =>
+        routes.MapPut("/api/sessions/{id}", async (int id, Session input, ConferencePlannerContext db) =>
         {
             var session = await db.Sessions.FindAsync(id);
 
@@ -92,7 +92,7 @@ public static class SessionEndpoints
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status204NoContent);
 
-        routes.MapDelete("/api/Sessions/{id}/", async (int id, ConferencePlannerContext db) =>
+        routes.MapDelete("/api/sessions/{id}/", async (int id, ConferencePlannerContext db) =>
         {
             if (await db.Sessions.FindAsync(id) is models.Session session)
             {
@@ -109,7 +109,7 @@ public static class SessionEndpoints
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        routes.MapPost("api/Sessions/Upload", async (HttpRequest req, ConferencePlannerContext db) =>
+        routes.MapPost("api/sessions/upload", async (HttpRequest req, ConferencePlannerContext db) =>
         {
             if (db.Sessions.Any())
             {
