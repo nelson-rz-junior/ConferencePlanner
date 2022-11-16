@@ -5,6 +5,7 @@ using FrontEnd.Areas.Identity;
 using FrontEnd.Middleware;
 using QRCoder;
 using FrontEnd.HealthChecks;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,15 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser().RequireIsAdminClaim();
     });
 });
+
+builder.Services.AddAuthentication()
+    .AddMicrosoftAccount(microsoftOptions =>
+    {
+        microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
+        microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+        microsoftOptions.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    });
+
 
 builder.Services.AddSingleton<IAdminService, AdminService>();
 
