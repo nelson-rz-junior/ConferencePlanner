@@ -4,7 +4,7 @@ using FrontEnd.Data;
 using FrontEnd.Areas.Identity;
 using FrontEnd.Middleware;
 using QRCoder;
-using Microsoft.AspNetCore.Identity;
+using FrontEnd.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,10 +39,19 @@ builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrl"]);
 });
 
+builder.Services.AddHealthChecks()
+    .AddCheck<BackendHealthCheck>("backend")
+    .AddDbContextCheck<IdentityContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseDatabaseErrorPage();
+}
+else
 {
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -58,6 +67,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<RequireLoginMiddleware>();
+
+app.MapHealthChecks("/health");
 
 app.MapRazorPages();
 

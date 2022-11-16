@@ -1,4 +1,5 @@
 ﻿using ConferencePlanner.DTO;
+using System.Net;
 
 namespace FrontEnd.Services;
 
@@ -32,7 +33,7 @@ public class ApiClient : IApiClient
         }
 
         var response = await _httpClient.GetAsync($"/api/attendees/{name}");
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        if (response.StatusCode == HttpStatusCode.NotFound)
         {
             return null;
         }
@@ -65,7 +66,7 @@ public class ApiClient : IApiClient
     public async Task<SessionResponse?> GetSessionAsync(int id)
     {
         var response = await _httpClient.GetAsync($"/api/sessions/{id}");
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        if (response.StatusCode == HttpStatusCode.NotFound)
         {
             return null;
         }
@@ -127,5 +128,19 @@ public class ApiClient : IApiClient
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<List<SearchResult>>() ?? new();
+    }
+
+    public async Task<bool> CheckHealthAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetStringAsync("/health");
+
+            return string.Equals(response, "Healthy", StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

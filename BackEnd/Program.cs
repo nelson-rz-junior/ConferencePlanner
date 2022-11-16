@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Endpoints;
 using BackEnd.Data.Context;
-using System.Text.Json.Serialization;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +11,18 @@ builder.Services.AddDbContext<ConferencePlannerContext>(options => options.UseSq
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(setup =>
 {
-    options.CustomSchemaIds(type => type.ToString());
+    setup.CustomSchemaIds(type => type.ToString());
+    setup.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "Conference Planner API", 
+        Version = "v1" 
+    });
 });
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ConferencePlannerContext>();
 
 var app = builder.Build();
 
@@ -22,14 +30,29 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(setup =>
+    {
+        setup.SwaggerEndpoint("/swagger/v1/swagger.json", "Conference Planner API v1");
+    });
+
+    app.UseDeveloperExceptionPage();
+    app.UseDatabaseErrorPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.MapSpeakerEndpoints();
 app.MapAttendeeEndpoints();
 app.MapSessionEndpoints();
 app.MapSearchEndpoints();
+
+app.MapHealthChecks("/health");
 
 app.Run();
