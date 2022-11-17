@@ -1,0 +1,23 @@
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a [routerLink]="['/speakers']">Speakers</a>
+  </li>
+  <li class="breadcrumb-item active">{{speaker.name}}</li>
+</ol>
+
+<div class="border-bottom mb-3">
+ <h3>{{speaker.name}}</h3>
+</div>
+
+<p>{{speaker.bio}}</p>
+
+<div *ngIf="speaker.sessions?.length > 0" class="row">
+  <h5>Sessions</h5>
+  <div class="col-md-5">
+      <ul class="list-group">
+        <li *ngFor="let session of speaker.sessions" class="list-group-item">
+            <a [routerLink]="['/sessions', session.id]">{{session.title}}</a>
+        </li>
+      </ul>
+  </div>
+</div>

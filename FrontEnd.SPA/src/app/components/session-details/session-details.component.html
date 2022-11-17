@@ -1,0 +1,18 @@
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a [routerLink]="['/sessions']">Agenda</a>
+  </li>
+  <li class="breadcrumb-item active">{{session.title}}</li>
+</ol>
+
+<div class="border-bottom mb-3">
+  <h3>{{session.title}}</h3>
+</div>
+
+<span class="label label-default">{{session.track?.name}} </span>
+
+<em *ngFor="let speaker of session.speakers">
+  <a [routerLink]="['/speakers', speaker.id]">{{speaker.name}}</a>
+</em>
+
+<p>{{session.abstract}}</p>

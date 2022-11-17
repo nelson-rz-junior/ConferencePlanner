@@ -1,0 +1,22 @@
+<div class="speaker-list">
+  <div class="border-bottom mb-3">
+      <h3>Speakers</h3>
+  </div>
+
+  <p *ngIf="!speakers">Loading...</p>
+
+  <div class="row">
+    <div *ngFor="let speaker of speakers" class="col-md-3 mb-4">
+        <div class="card speaker h-100">
+            <div class="card-header">
+              <a [routerLink]="['/speakers', speaker.id]">{{speaker.name}}</a>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li *ngFor="let session of speaker.sessions" class="list-group-item">
+                <a [routerLink]="['/sessions', session.id]">{{session.title}}</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>

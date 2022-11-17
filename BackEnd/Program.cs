@@ -24,7 +24,13 @@ builder.Services.AddSwaggerGen(setup =>
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ConferencePlannerContext>();
 
+builder.Services.AddCors();
+
 var app = builder.Build();
+
+app.UseCors(x => x.AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowAnyOrigin());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

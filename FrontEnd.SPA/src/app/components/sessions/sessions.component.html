@@ -1,0 +1,27 @@
+<div class="agenda">
+  <div class="border-bottom mb-3">
+    <h3>My Conference 2022</h3>
+  </div>
+
+  <p *ngIf="!sessions">Loading...</p>
+
+  <div class="row">
+    <div *ngFor="let session of sessions" class="col-md-3 mb-4">
+      <div class="card shadow session h-100">
+        <div class="card-header">{{session.track.name}}</div>
+        <div class="card-body">
+            <h5 class="card-title">
+              <a [routerLink]="['/sessions', session.id]">{{session.title}}</a>
+            </h5>
+        </div>
+        <div class="card-footer">
+          <ul class="list-inline mb-0">
+            <li *ngFor="let speaker of session.speakers" class="list-inline-item">
+              <a [routerLink]="['/speakers', speaker.id]">{{speaker.name}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
